@@ -6,7 +6,7 @@ variables:
   ARM_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID}
   ARM_TENANT_ID: ${ARM_TENANT_ID}
   # Azure Storage Account access for backend
-  #ARM_ACCESS_KEY: ${ARM_ACCESS_KEY}
+  ##ARM_ACCESS_KEY: ${ARM_ACCESS_KEY}
 
 workflow:
   rules:
