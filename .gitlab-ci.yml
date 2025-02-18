@@ -1,17 +1,14 @@
 variables:
-  TF_ROOT: ${CI_PROJECT_DIR}/conditional-access-policies
   # Azure authentication
   ARM_CLIENT_ID: ${ARM_CLIENT_ID}
   ARM_CLIENT_SECRET: ${ARM_CLIENT_SECRET}
   ARM_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID}
   ARM_TENANT_ID: ${ARM_TENANT_ID}
-  # Azure Storage Account access for backend
-  ##ARM_ACCESS_KEY: ${ARM_ACCESS_KEY}
-
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+  
+  # Terraform settings
+  TF_ROOT: ${CI_PROJECT_DIR}/conditional-access-policies
+  # Variables file path
+  TF_VAR_FILE: ${CI_PROJECT_DIR}/conditional-access-policies/terraform.tfvars
 
 stages:
   - validate
@@ -19,31 +16,37 @@ stages:
   - apply
 
 default:
-  image: hashicorp/terraform:latest
+  image: hashicorp/terraform:1.5.7
   before_script:
     - cd ${TF_ROOT}
     - terraform --version
-    - terraform init
 
 validate:
   stage: validate
   script:
+    - terraform init
     - terraform validate
     - terraform fmt -check -recursive
 
 plan:
   stage: plan
   script:
-    - terraform plan -out=tfplan
+    - terraform init
+    - terraform plan -var-file="${TF_VAR_FILE}" -out=tfplan
   artifacts:
     paths:
-      - tfplan
+      - ${TF_ROOT}/tfplan
     expire_in: 1 week
 
 apply:
   stage: apply
   script:
+    - terraform init
     - terraform apply -auto-approve tfplan
   dependencies:
     - plan
-  when: manual
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+      when: manual
