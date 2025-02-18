@@ -1,5 +1,0 @@
-*.ci.yml
-*.tfstate
-*.tfstate.*
-*.tfvars
-.terraform/

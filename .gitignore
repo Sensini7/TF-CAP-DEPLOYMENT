@@ -1,4 +1,4 @@
-*ci.yml
+*.ci.yml
 *.tfstate
 *.tfstate.*
 *.tfvars
