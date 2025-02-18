@@ -7,45 +7,60 @@ variables:
   
   # Terraform settings
   TF_ROOT: ${CI_PROJECT_DIR}/conditional-access-policies
-  # Variables file path
-  TF_VAR_FILE: ${CI_PROJECT_DIR}/conditional-access-policies/terraform.tfvars
 
 stages:
+  - init
   - validate
   - plan
   - apply
 
-default:
+init:
   image: hashicorp/terraform:1.5.7
-  before_script:
-    - mkdir -p ${TF_ROOT}
+  stage: init
+  script:
     - cd ${TF_ROOT}
-    - terraform --version
+    - terraform version
+    - terraform init
+  artifacts:
+    paths:
+      - ${TF_ROOT}/.terraform
+    expire_in: 1 hour
 
 validate:
+  image: hashicorp/terraform:1.5.7
   stage: validate
   script:
-    - terraform init
+    - cd ${TF_ROOT}
+    - terraform version
     - terraform validate
     - terraform fmt -check -recursive
+  dependencies:
+    - init
 
 plan:
+  image: hashicorp/terraform:1.5.7
   stage: plan
   script:
-    - terraform init
-    - terraform plan -var-file="${TF_VAR_FILE}" -out=tfplan
+    - cd ${TF_ROOT}
+    - terraform version
+    - terraform plan -out=tfplan
   artifacts:
     paths:
       - ${TF_ROOT}/tfplan
     expire_in: 1 week
+  dependencies:
+    - init
 
 apply:
+  image: hashicorp/terraform:1.5.7
   stage: apply
   script:
-    - terraform init
+    - cd ${TF_ROOT}
+    - terraform version
     - terraform apply -auto-approve tfplan
   dependencies:
     - plan
+    - init
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"
       when: manual
