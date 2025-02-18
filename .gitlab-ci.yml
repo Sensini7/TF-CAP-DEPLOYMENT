@@ -1,0 +1,48 @@
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/conditional-access-policies
+  # Azure authentication
+  ARM_CLIENT_ID: ${ARM_CLIENT_ID}
+  ARM_CLIENT_SECRET: ${ARM_CLIENT_SECRET}
+  ARM_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID}
+  ARM_TENANT_ID: ${ARM_TENANT_ID}
+  # Azure Storage Account access for backend
+  #ARM_ACCESS_KEY: ${ARM_ACCESS_KEY}
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+stages:
+  - validate
+  - plan
+  - apply
+
+default:
+  image: hashicorp/terraform:latest
+  before_script:
+    - cd ${TF_ROOT}
+    - terraform --version
+    - terraform init
+
+validate:
+  stage: validate
+  script:
+    - terraform validate
+    - terraform fmt -check -recursive
+
+plan:
+  stage: plan
+  script:
+    - terraform plan -out=tfplan
+  artifacts:
+    paths:
+      - tfplan
+    expire_in: 1 week
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve tfplan
+  dependencies:
+    - plan
+  when: manual
