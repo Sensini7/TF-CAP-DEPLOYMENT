@@ -1,10 +1,10 @@
 name: CAP Deployment
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
   workflow_dispatch:
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 2.52.0  # Update to your required Terraform version
+          terraform_version: "~> 2.52.0"  # Update to your required Terraform version
 
       - name: Terraform Format
         run: terraform fmt -recursive
