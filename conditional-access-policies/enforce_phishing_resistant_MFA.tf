@@ -1,8 +1,8 @@
 # MS.AAD.3.1v1  Phishing-resistant MFA SHALL be enforced for all users.  Yes
 
-locals {
-  require_phishing_resistant_mfa_auth_strength_policy_id = "00000000-0000-0000-0000-000000000004"
-}
+# locals {
+#   require_phishing_resistant_mfa_auth_strength_policy_id = "00000000-0000-0000-0000-000000000004"
+# }
 
 variable "mfa_ia-2" {
   description = "Enable the Phishing-Resistant MFA Enforcement Conditional Access Policy"
