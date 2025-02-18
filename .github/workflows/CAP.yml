@@ -30,25 +30,25 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: "~> 3.2.2"  # Update to your required Terraform version
+          terraform_version: "~> 1.5.7"  # Update to your required Terraform version
 
       - name: Terraform Format
         run: terraform fmt -recursive
-        working-directory: ./terraform
+        working-directory: ./conditional-access-policies
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ./terraform
+        working-directory: ./conditional-access-policies
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: ./terraform
+        working-directory: ./conditional-access-policies
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
-        working-directory: ./terraform
+        working-directory: ./conditional-access-policies
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
-        working-directory: ./terraform
+        working-directory: ./conditional-access-policies
