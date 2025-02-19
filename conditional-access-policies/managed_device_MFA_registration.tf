@@ -23,7 +23,7 @@ resource "azuread_conditional_access_policy" "managed_device_mfa_registration" {
     applications {
       included_user_actions = ["urn:user:registersecurityinfo"]
       excluded_applications = []
-      included_applications = []
+      #included_applications = []
     }
 
     locations {
