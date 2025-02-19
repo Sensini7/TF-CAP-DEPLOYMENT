@@ -45,7 +45,7 @@ jobs:
         working-directory: ./conditional-access-policies
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
         working-directory: ./conditional-access-policies
 
       - name: Terraform Apply
